@@ -1,21 +1,19 @@
 import { createInertiaApp } from '@inertiajs/vue3';
-import { initializeTheme } from '@/composables/useAppearance';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
 void createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => (title ? `${title} · Sertifika` : 'Sertifika'),
+    // Halaman portal customer membungkus dirinya sendiri dengan PortalLayout/PortalAuthLayout.
     layout: (name) => {
         switch (true) {
-            case name === 'Welcome':
+            case name.startsWith('portal/'):
                 return null;
-            case name.startsWith('auth/'):
+            case name.startsWith('admin/auth/'):
                 return AuthLayout;
-            case name.startsWith('settings/'):
+            case name.startsWith('admin/settings/'):
                 return [AppLayout, SettingsLayout];
             default:
                 return AppLayout;
@@ -31,12 +29,9 @@ void createInertiaApp({
         });
     },
     progress: {
-        color: '#4B5563',
+        color: '#f2b84b',
     },
 });
 
-// This will set light / dark mode on page load...
-initializeTheme();
-
-// This will listen for flash toast data from the server...
+// Toast dari Inertia::flash('toast', …) (panel admin).
 initializeFlashToast();

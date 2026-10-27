@@ -15,6 +15,7 @@
     <source>
         <include>
             <directory>app</directory>
+            <directory>modules</directory>
         </include>
     </source>
     <php>
@@ -29,6 +30,10 @@
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
+        <env name="CMS_API_URL" value="http://cms.test/api/v1"/>
+        <env name="PORTAL_SERVICE_TOKEN" value="test-service-token"/>
+        <env name="LANDING_URL" value="http://localhost:4321"/>
+        <env name="CORS_ALLOWED_ORIGINS" value="http://localhost:4321"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>

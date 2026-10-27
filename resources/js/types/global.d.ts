@@ -1,5 +1,5 @@
 import type { Directive } from 'vue';
-import type { Auth } from '@/types/auth';
+import type { Auth, Site } from '@/types/auth';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -18,8 +18,15 @@ declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
             name: string;
+            landingUrl: string;
             auth: Auth;
+            flash: { status: string | null };
+            /** Hanya area /admin. */
             sidebarOpen: boolean;
+            /** Hanya area portal (data CMS /site untuk header/footer). */
+            site: Site;
+            /** Hanya area portal: status klaim hasil assessment. */
+            assessment?: { pending: boolean; claimed: boolean };
             [key: string]: unknown;
         };
     }

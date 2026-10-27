@@ -5,24 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
-import { edit as editAppearance } from '@/routes/appearance';
-import { edit as editProfile } from '@/routes/profile';
-import { edit as editSecurity } from '@/routes/security';
+import { edit as editProfile } from '@/routes/admin/profile';
+import { edit as editSecurity } from '@/routes/admin/security';
 import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: editProfile(),
-    },
-    {
-        title: 'Security',
-        href: editSecurity(),
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-    },
+    { title: 'Profil', href: editProfile() },
+    { title: 'Keamanan & 2FA', href: editSecurity() },
 ];
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
@@ -31,15 +20,15 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 <template>
     <div class="px-4 py-6">
         <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
+            title="Pengaturan"
+            description="Profil dan keamanan akun admin Anda"
         />
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
             <aside class="w-full max-w-xl lg:w-48">
                 <nav
                     class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
+                    aria-label="Pengaturan"
                 >
                     <Button
                         v-for="item in sidebarNavItems"
@@ -51,10 +40,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                         ]"
                         as-child
                     >
-                        <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
-                        </Link>
+                        <Link :href="item.href">{{ item.title }}</Link>
                     </Button>
                 </nav>
             </aside>

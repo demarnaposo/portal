@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    // API CMS (Statamic), dipanggil server-to-server oleh modul Cms.
+    'cms' => [
+        'url' => rtrim((string) env('CMS_API_URL', 'http://localhost:8000/api/v1'), '/'),
+        'timeout' => (int) env('CMS_API_TIMEOUT', 10),
+        // Bearer untuk POST /internal/assessment/score (sama dengan PORTAL_SERVICE_TOKEN di CMS).
+        'token' => env('PORTAL_SERVICE_TOKEN'),
+    ],
+
 ];

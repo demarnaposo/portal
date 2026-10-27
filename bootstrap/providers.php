@@ -1,9 +1,17 @@
 <?php
 
 use App\Providers\AppServiceProvider;
-use App\Providers\FortifyServiceProvider;
+use Modules\Admin\AdminServiceProvider;
+use Modules\Assessment\AssessmentServiceProvider;
+use Modules\Cms\CmsServiceProvider;
+use Modules\Identity\IdentityServiceProvider;
+use Modules\Portal\PortalServiceProvider;
 
 return [
     AppServiceProvider::class,
-    FortifyServiceProvider::class,
+    CmsServiceProvider::class,
+    IdentityServiceProvider::class,
+    AssessmentServiceProvider::class,
+    PortalServiceProvider::class,
+    AdminServiceProvider::class,
 ];
