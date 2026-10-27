@@ -64,6 +64,8 @@ export default defineConfig({
         ignorePatterns: [
             '.claude/**',
             'AGENTS.md',
+            // Salinan identik astro/src/styles/theme.css (format milik Astro).
+            'resources/css/theme.css',
             '.github/**',
             'composer.json',
             'resources/js/components/ui/*',
