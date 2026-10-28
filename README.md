@@ -21,7 +21,7 @@ landing Astro :4321 ──POST /api/assessment/score──▶ portal :8001 ─�
 | Frontend    | Vue 3.5 + TypeScript 5.9 (`<script setup lang="ts">`), Tailwind CSS 4.3, shadcn-vue (reka-ui 2.11), Wayfinder  |
 | Auth admin  | Laravel Fortify 1.41 (login, tantangan 2FA TOTP, konfirmasi sandi)                                             |
 | Test        | PHPUnit 12                                                                                                     |
-| Dev tooling | Laravel Boost 2.10 (guidelines + skills + MCP), Vite+ (`vp`: build, lint, format)                              |
+| Dev tooling | Vite+ (`vp`: build, lint, format)                                                                              |
 
 Package manager JS: **Bun** (`bun install`, `bun run build|dev|check|types:check`), sama seperti landing.
 Vite+ butuh Node di PATH (mis. `export PATH="$HOME/.nvm/versions/node/v24.16.0/bin:$PATH"`).
@@ -41,9 +41,11 @@ modules/                                namespace Modules\ — modul lain hanya 
 ├── Portal/        UI customer: /dashboard (hasil terbaru + 3 rekomendasi /programs), /assessments, /checkout?batch=&qty=
 │                  (ringkasan batch dari CMS, "Checkout segera hadir"), /orders & /programs (segera hadir), GET /api/session
 └── Admin/         /admin: guard `admin`, tabel `admins`, Fortify + 2FA wajib (EnsureTwoFactorEnabled), role owner/operator
-                   (Gate viewCustomers, viewAdmins), `php artisan admin:create`; dashboard, customer (NPWP tersamar),
+                   (Gate viewCustomers, viewAdmins), `php artisan admin:create`, lupa sandi mandiri (broker `admins`,
+                   email lewat queue), cookie session sendiri (UseAdminSessionCookie); dashboard, customer (NPWP tersamar),
                    hasil assessment, daftar admin (owner); menu Pesanan/Peserta/Kuota batch/Sinkron Odoo "segera hadir"
 app/Http/Middleware/HandleInertiaRequests.php   props bersama per area (customer: nama/email + data situs CMS; admin: akun admin)
+app/Notifications/ActionMail.php                email transaksional Bahasa Indonesia (template resources/views/mail), dipakai Identity & Admin
 resources/css/theme.css                         token desain — salinan identik astro/src/styles/theme.css (sumber kebenaran: Astro)
 resources/js/pages/portal/**                    halaman customer (layout header/footer meniru landing)
 resources/js/pages/admin/**                     halaman admin (layout sidebar starter kit, shadcn-vue)
@@ -61,10 +63,16 @@ Batas modul diuji `tests/Unit/ModuleBoundariesTest.php`. Nanti: **Commerce** (ch
 | Area          | `/` (`/login`, `/register`, `/dashboard`, …)                             | `/admin`                                                      |
 | Login         | `LoginRequest`: kunci 60 dtk setelah 5 gagal per email+IP, + 20/menit/IP | Fortify: 5/menit per email+IP; 2FA 5/menit                    |
 | 2FA           | —                                                                        | TOTP wajib; tanpa 2FA hanya halaman Keamanan yang bisa dibuka |
+| Lupa sandi    | broker `customers` (`customer_password_reset_tokens`)                    | broker `admins` (`admin_password_reset_tokens`); 2FA tetap    |
+| Cookie        | `SESSION_COOKIE`, path `/`                                               | `SESSION_ADMIN_COOKIE`, path `/admin` (juga `XSRF-TOKEN`)     |
 
 - Customer tidak bisa membuka `/admin` (dialihkan ke login admin); admin bukan customer (`/api/session` →
-  `authenticated: false`). Satu cookie session (`sertifika-portal-session`) dipakai kedua guard; logout di salah satu
-  area meng-invalidate session sehingga area lain ikut keluar.
+  `authenticated: false`). Session terpisah per area: request `/admin*` memakai cookie session & `XSRF-TOKEN` sendiri
+  dengan path `/admin` (middleware global `UseAdminSessionCookie`, sebelum `StartSession`), jadi logout di satu area
+  tidak mengeluarkan area lain di browser yang sama.
+- Lupa sandi (customer `/forgot-password`, admin `/admin/forgot-password`): pesan sama untuk email terdaftar atau
+  tidak, throttle 5/menit/IP + 3/menit/email, token berlaku 60 menit. Ganti/reset sandi mengakhiri session lain
+  (`auth.session`) dan mengganti `remember_token`.
 - Cookie browser tidak dipisah per port: nama cookie session portal berbeda dari CMS (`statamic-session`). CSRF
   Laravel 13 lolos lewat `Sec-Fetch-Site: same-origin`, jadi cookie `XSRF-TOKEN` bersama di `localhost` tidak bentrok.
 - NPWP terenkripsi (`APP_KEY`; jangan ganti tanpa re-enkripsi), hanya dikirim di halaman Profil customer; panel
@@ -83,7 +91,7 @@ cp .env.example .env && php artisan key:generate   # isi DB_PASSWORD & PORTAL_SE
 php artisan migrate
 bun run build                                      # atau: bun run dev (HMR)
 php artisan serve --port=8001                      # http://localhost:8001
-php artisan queue:work --tries=5                   # email verifikasi/reset → Mailpit http://localhost:8025
+php artisan queue:work --tries=5                   # email verifikasi/reset (customer & admin) → Mailpit http://localhost:8025
 php artisan schedule:work                          # model:prune harian
 php artisan admin:create pemilik@sertifika.id --name="Pemilik"   # tanpa TTY (-n): sandi acak ditampilkan sekali
 ```
@@ -97,6 +105,7 @@ Database: `portal` dengan user `portal` di container `mariadb-dev` (port 3307), 
 | `APP_URL`                        | `http://localhost:8001`                       | URL portal (tautan email).                                                             |
 | `DB_*`                           | `mariadb` 127.0.0.1:3307 `portal`             | DB sendiri.                                                                            |
 | `SESSION_COOKIE`                 | `sertifika-portal-session`                    | Beda nama dari cookie CMS.                                                             |
+| `SESSION_ADMIN_COOKIE`           | `sertifika-admin-session`                     | Cookie session area `/admin` (path `/admin`).                                          |
 | `LANDING_URL`                    | `http://localhost:4321`                       | Menu header/footer, halaman program, kebijakan privasi.                                |
 | `CORS_ALLOWED_ORIGINS`           | `http://localhost:4321,http://localhost:4323` | Origin landing untuk `/api/*` (dengan credentials).                                    |
 | `CMS_API_URL`                    | `http://localhost:8000/api/v1`                | API CMS (server-to-server).                                                            |
@@ -111,19 +120,10 @@ Database: `portal` dengan user `portal` di container `mariadb-dev` (port 3307), 
 ```bash
 php artisan test            # PHPUnit (Http CMS di-fake; tidak ada request keluar)
 vendor/bin/pint --test
-vendor/bin/phpstan analyse  # app/ (modul belum masuk cakupan)
+vendor/bin/phpstan analyse  # app/ + modules/ (level 7)
 bun run types:check         # vue-tsc
 bun run check               # Vite+ lint + format
 ```
-
-## Skills AI (`.claude/skills/`)
-
-- Laravel Boost (`php artisan boost:install`): `laravel-best-practices`, `fortify-development`, `wayfinder-development`,
-  `tailwindcss-development`, `testing-best-practices`, `infer-conventions`, `deploying-to-cloud` + guidelines di
-  `AGENTS.md` (dimuat lewat `CLAUDE.md`).
-- `vue-best-practices` dari [vuejs-ai/skills](https://github.com/vuejs-ai/skills) (komunitas dengan keterlibatan tim
-  inti Vue, bukan rilis resmi Vue; markdown saja, commit `198f0cd`).
-- `ui-ux-pro-max`, `design-system` disalin dari repo Astro.
 
 ## Produksi (catatan)
 

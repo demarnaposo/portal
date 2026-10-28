@@ -5,9 +5,15 @@ includes:
 parameters:
     paths:
         - app/
+        - modules/
         - bootstrap/app.php
         - config/
         - database/
         - routes/
 
     level: 7
+
+    # env() hanya di file config (juga config milik modul).
+    configDirectories:
+        - config
+        - modules/*/config

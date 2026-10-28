@@ -4,6 +4,7 @@ namespace Modules\Assessment\Contracts\Data;
 
 use Illuminate\Contracts\Support\Arrayable;
 
+/** @implements Arrayable<string, mixed> */
 final readonly class AssessmentResultData implements Arrayable
 {
     /**
@@ -19,6 +20,7 @@ final readonly class AssessmentResultData implements Arrayable
         public ?string $customerId = null,
     ) {}
 
+    /** @return array{id: string, version: int, recommended_category: array{slug: string, title: string}, scores: list<array{slug: string, title: string, score: int}>, taken_at: string, customer_id: ?string} */
     public function toArray(): array
     {
         return [

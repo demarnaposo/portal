@@ -2,9 +2,11 @@
 
 namespace Modules\Admin\Domain;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Carbon;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Modules\Admin\Notifications\ResetPasswordNotification;
 
 /**
  * Akun panel admin (guard `admin`, tabel `admins`). Bukan customer; 2FA TOTP wajib (EnsureTwoFactorEnabled).
@@ -13,11 +15,13 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string $name
  * @property string $email
  * @property AdminRole $role
- * @property ?Carbon $two_factor_confirmed_at
+ * @property ?CarbonImmutable $two_factor_confirmed_at
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
  */
 class Admin extends Authenticatable
 {
-    use TwoFactorAuthenticatable;
+    use Notifiable, TwoFactorAuthenticatable;
 
     protected $fillable = ['name', 'email', 'password', 'role'];
 
@@ -35,5 +39,15 @@ class Admin extends Authenticatable
     public function isOwner(): bool
     {
         return $this->role === AdminRole::Owner;
+    }
+
+    /**
+     * Dipanggil broker `admins` (reset sandi mandiri dari /admin/forgot-password).
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

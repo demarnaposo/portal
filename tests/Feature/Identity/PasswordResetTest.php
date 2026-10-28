@@ -60,9 +60,9 @@ class PasswordResetTest extends TestCase
         $this->assertTrue(Hash::check('rahasia-123', $customer->fresh()->password));
     }
 
-    public function test_customer_password_broker_and_no_admin_broker(): void
+    public function test_customer_and_admin_brokers_are_separate(): void
     {
-        $this->assertNull(config('auth.passwords.admins'));
+        $this->assertSame('admin_password_reset_tokens', config('auth.passwords.admins.table'));
         $this->assertSame('customers', config('auth.passwords.customers.provider'));
         $this->assertSame('customer_password_reset_tokens', config('auth.passwords.customers.table'));
     }

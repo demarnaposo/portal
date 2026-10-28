@@ -76,6 +76,8 @@ class AdminPagesTest extends TestCase
     public function test_only_owner_can_view_admin_list(): void
     {
         $this->actingAs($this->admin(AdminRole::Operator), 'admin')->get('/admin/admins')->assertForbidden();
+        // Admin lain = session lain (auth.session menyimpan hash sandi admin sebelumnya).
+        $this->flushSession();
         $this->actingAs($this->admin(AdminRole::Owner), 'admin')->get('/admin/admins')
             ->assertInertia(fn (AssertableInertia $page) => $page->component('admin/admins/Index')->has('admins', 2));
     }

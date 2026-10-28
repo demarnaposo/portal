@@ -21,7 +21,7 @@ final class HttpCmsApi implements CmsApi
 
     public function programs(array $query = []): array
     {
-        return $this->data($this->send('GET', '/programs', $query));
+        return array_values($this->data($this->send('GET', '/programs', $query)));
     }
 
     public function batch(string $id): ?array
@@ -36,6 +36,7 @@ final class HttpCmsApi implements CmsApi
         return $this->data($this->send('POST', '/internal/assessment/score', ['answers' => (object) $answers], withToken: true));
     }
 
+    /** @param  array<string, mixed>|object  $payload */
     private function send(string $method, string $path, array|object $payload = [], bool $withToken = false, bool $allow404 = false): Response
     {
         $url = config('services.cms.url').$path;
@@ -60,6 +61,7 @@ final class HttpCmsApi implements CmsApi
         return $withToken ? $client->withToken((string) config('services.cms.token')) : $client;
     }
 
+    /** @return array<string, mixed> isi `data` respons CMS (bentuk sesuai kontrak endpoint) */
     private function data(Response $response): array
     {
         $data = $response->json('data');

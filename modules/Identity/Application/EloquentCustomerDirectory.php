@@ -3,7 +3,7 @@
 namespace Modules\Identity\Application;
 
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Identity\Contracts\CustomerDirectory;
 use Modules\Identity\Contracts\Data\CustomerData;
 use Modules\Identity\Domain\Customer;

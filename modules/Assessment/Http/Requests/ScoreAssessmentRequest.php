@@ -2,6 +2,7 @@
 
 namespace Modules\Assessment\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -18,6 +19,7 @@ final class ScoreAssessmentRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [
@@ -26,6 +28,7 @@ final class ScoreAssessmentRequest extends FormRequest
         ];
     }
 
+    /** @return list<\Closure(Validator): void> */
     public function after(): array
     {
         return [function (Validator $validator) {

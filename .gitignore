@@ -39,5 +39,9 @@ yarn-error.log
 /.mcp.json
 /opencode.json
 /opencode.jsonc
-/.claude/*
-!/.claude/skills/
+
+# Local-only: AI tooling and internal docs
+/.claude/
+/docs/
+/AGENTS.md
+/CLAUDE.md

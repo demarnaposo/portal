@@ -2,7 +2,7 @@
 
 namespace Modules\Assessment\Application;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use Modules\Assessment\Contracts\AssessmentResults;
 use Modules\Assessment\Domain\AssessmentAttempt;
@@ -12,7 +12,7 @@ final class AttemptStore implements AssessmentResults
 {
     /**
      * @param  array<string, string>  $answers
-     * @param  array{version: int, scores: list<array{category: array{slug: string, title: string}, score: int}>, recommended_category: array{slug: string}}  $result  hasil scoring CMS
+     * @param  array<string, mixed>  $result  `AssessmentResult` dari CMS: version, scores[{category{slug, title}, score}], recommended_category{slug}
      * @return string attempt_token (plaintext, hanya dikembalikan sekali)
      */
     public function record(array $answers, array $result): string
@@ -47,12 +47,12 @@ final class AttemptStore implements AssessmentResults
 
     public function forCustomer(string $customerId): array
     {
-        return AssessmentAttempt::query()
+        return array_values(AssessmentAttempt::query()
             ->where('customer_id', $customerId)
             ->latest()->orderByDesc('id')
             ->get()
             ->map(fn (AssessmentAttempt $a) => $a->toData())
-            ->all();
+            ->all());
     }
 
     public function count(bool $claimedOnly = false): int

@@ -26,7 +26,7 @@ final class AssessmentServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/config.php', 'assessment');
+        $this->mergeConfigFrom(__DIR__.'/config/assessment.php', 'assessment');
         $this->app->bind(AssessmentResults::class, AttemptStore::class);
     }
 

@@ -5,6 +5,10 @@ namespace Modules\Portal\Http\Controllers;
 /** Props kartu program dari `ProgramSummary` CMS (+ URL halaman program di landing Astro). */
 final class ProgramCard
 {
+    /**
+     * @param  array<string, mixed>  $p  `ProgramSummary`
+     * @return array<string, mixed>
+     */
     public static function from(array $p): array
     {
         return [

@@ -38,7 +38,11 @@ class AssessmentAttempt extends Model
         ];
     }
 
-    /** Attempt anonim yang tidak pernah diklaim, lebih tua dari masa retensi. */
+    /**
+     * Attempt anonim yang tidak pernah diklaim, lebih tua dari masa retensi.
+     *
+     * @return Builder<self>
+     */
     public function prunable(): Builder
     {
         return static::whereNull('customer_id')

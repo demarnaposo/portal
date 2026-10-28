@@ -2,11 +2,13 @@
 import { Form, Head } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { request } from '@/routes/admin/password';
 import { store } from '@/routes/login';
 
 defineOptions({
@@ -54,7 +56,12 @@ defineProps<{
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">Kata sandi</Label>
+                <div class="flex items-center justify-between">
+                    <Label for="password">Kata sandi</Label>
+                    <TextLink :href="request()" class="text-sm">
+                        Lupa kata sandi?
+                    </TextLink>
+                </div>
                 <PasswordInput
                     id="password"
                     name="password"

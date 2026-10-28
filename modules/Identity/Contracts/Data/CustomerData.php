@@ -4,7 +4,11 @@ namespace Modules\Identity\Contracts\Data;
 
 use Illuminate\Contracts\Support\Arrayable;
 
-/** Data customer yang aman dibagikan ke modul lain (tanpa password; NPWP hanya versi tersamar). */
+/**
+ * Data customer yang aman dibagikan ke modul lain (tanpa password; NPWP hanya versi tersamar).
+ *
+ * @implements Arrayable<string, mixed>
+ */
 final readonly class CustomerData implements Arrayable
 {
     public function __construct(
@@ -18,6 +22,7 @@ final readonly class CustomerData implements Arrayable
         public ?string $createdAt = null,
     ) {}
 
+    /** @return array{id: string, name: string, email: string, phone: string, company_name: ?string, email_verified: bool, masked_npwp: ?string, created_at: ?string} */
     public function toArray(): array
     {
         return [

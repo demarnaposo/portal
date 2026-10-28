@@ -2,6 +2,7 @@
 
 namespace Modules\Identity\Notifications;
 
+use App\Notifications\ActionMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,6 +15,7 @@ final class ResetPasswordNotification extends Notification implements ShouldQueu
 
     public function __construct(public readonly string $token) {}
 
+    /** @return list<string> */
     public function via(object $notifiable): array
     {
         return ['mail'];

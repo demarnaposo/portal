@@ -19,7 +19,7 @@ final class EmailVerificationController
 
     public function verify(EmailVerificationRequest $request): RedirectResponse
     {
-        if (! $request->user()->hasVerifiedEmail()) {
+        if (! $request->user('customer')->hasVerifiedEmail()) {
             $request->fulfill();
         }
 

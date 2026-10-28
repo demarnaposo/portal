@@ -2,11 +2,13 @@
 
 namespace Modules\Admin\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
 final class PasswordUpdateRequest extends FormRequest
 {
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [

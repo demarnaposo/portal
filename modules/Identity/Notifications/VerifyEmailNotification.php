@@ -2,6 +2,7 @@
 
 namespace Modules\Identity\Notifications;
 
+use App\Notifications\ActionMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -16,6 +17,7 @@ final class VerifyEmailNotification extends Notification implements ShouldQueue
 
     public const EXPIRE_MINUTES = 60;
 
+    /** @return list<string> */
     public function via(object $notifiable): array
     {
         return ['mail'];

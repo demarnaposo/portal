@@ -2,12 +2,12 @@
 
 namespace Modules\Identity\Domain;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Auth\MustVerifyEmail as VerifiesEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Modules\Identity\Contracts\Data\CustomerData;
 use Modules\Identity\Notifications\ResetPasswordNotification;
 use Modules\Identity\Notifications\VerifyEmailNotification;
@@ -22,9 +22,11 @@ use Modules\Identity\Notifications\VerifyEmailNotification;
  * @property ?string $company_name
  * @property ?string $npwp
  * @property ?string $billing_address
- * @property ?Carbon $email_verified_at
- * @property Carbon $privacy_accepted_at
- * @property ?Carbon $marketing_opt_in_at
+ * @property ?CarbonImmutable $email_verified_at
+ * @property CarbonImmutable $privacy_accepted_at
+ * @property ?CarbonImmutable $marketing_opt_in_at
+ * @property ?CarbonImmutable $created_at
+ * @property ?CarbonImmutable $updated_at
  */
 class Customer extends Authenticatable implements MustVerifyEmail
 {

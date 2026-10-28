@@ -15,6 +15,7 @@ use Laravel\Fortify\Contracts\TwoFactorLoginResponse;
 use Laravel\Fortify\Fortify;
 use Modules\Admin\Console\CreateAdminCommand;
 use Modules\Admin\Domain\Admin;
+use Modules\Admin\Http\Middleware\UseAdminSessionCookie;
 use Modules\Admin\Http\Responses\LoginResponse;
 
 /**
@@ -28,6 +29,7 @@ final class AdminServiceProvider extends ServiceProvider
     {
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
         $this->app->singleton(TwoFactorLoginResponse::class, LoginResponse::class);
+        $this->app->singleton(UseAdminSessionCookie::class);
     }
 
     public function boot(): void
@@ -44,7 +46,7 @@ final class AdminServiceProvider extends ServiceProvider
         Gate::define('viewCustomers', fn (Admin $admin) => true);
         Gate::define('viewAdmins', fn (Admin $admin) => $admin->isOwner());
 
-        Route::middleware(['web', 'auth:admin'])->prefix('admin')->name('admin.')->group(__DIR__.'/routes.php');
+        Route::middleware('web')->prefix('admin')->name('admin.')->group(__DIR__.'/routes.php');
     }
 
     private function configureFortify(): void
@@ -57,6 +59,10 @@ final class AdminServiceProvider extends ServiceProvider
 
         RateLimiter::for('login', fn (Request $request) => Limit::perMinute(5)
             ->by(Str::transliterate(Str::lower((string) $request->input(Fortify::username())).'|'.$request->ip())));
+        RateLimiter::for('admin-password', fn (Request $request) => [
+            Limit::perMinute(5)->by('ip:'.$request->ip()),
+            Limit::perMinute(3)->by('email:'.mb_strtolower((string) $request->input('email'))),
+        ]);
         RateLimiter::for('two-factor', fn (Request $request) => Limit::perMinute(5)->by($request->session()->get('login.id')));
     }
 }

@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'passwords' => null, // reset sandi admin tidak dipakai
+    'passwords' => 'admins', // reset sandi admin: Modules\Admin\Http\Controllers\PasswordResetController (bukan fitur Fortify)
 
     /*
     |--------------------------------------------------------------------------

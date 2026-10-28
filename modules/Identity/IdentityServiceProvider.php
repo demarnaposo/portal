@@ -24,7 +24,6 @@ final class IdentityServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/Database/Migrations');
-        $this->loadViewsFrom(__DIR__.'/resources/views', 'identity');
 
         $byIp = fn (int $perMinute) => fn (Request $request) => Limit::perMinute($perMinute)->by($request->ip());
 

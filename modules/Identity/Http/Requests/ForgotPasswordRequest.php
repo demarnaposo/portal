@@ -2,6 +2,7 @@
 
 namespace Modules\Identity\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class ForgotPasswordRequest extends FormRequest
@@ -13,6 +14,7 @@ final class ForgotPasswordRequest extends FormRequest
         $this->normalizeCustomerInput();
     }
 
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return ['email' => ['required', 'string', 'email']];

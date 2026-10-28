@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
+use Modules\Admin\Http\Middleware\UseAdminSessionCookie;
 use Modules\Assessment\Http\Middleware\CapturePendingClaim;
 
 $isAdmin = fn (Request $request): bool => $request->is('admin', 'admin/*');
@@ -17,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) use ($isAdmin): void {
+        // Sebelum StartSession: /admin* memakai cookie session & XSRF-TOKEN sendiri (path /admin).
+        $middleware->prepend(UseAdminSessionCookie::class);
         $middleware->encryptCookies(except: ['sidebar_state']);
 
         $middleware->web(append: [

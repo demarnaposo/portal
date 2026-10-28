@@ -132,6 +132,9 @@ return [
         Str::slug((string) env('APP_NAME', 'laravel')).'-session',
     ),
 
+    // Area /admin memakai cookie session sendiri dengan path `/admin` (Modules\Admin\Http\Middleware\UseAdminSessionCookie).
+    'admin_cookie' => env('SESSION_ADMIN_COOKIE', 'sertifika-admin-session'),
+
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Path

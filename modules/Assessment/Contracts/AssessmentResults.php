@@ -2,7 +2,7 @@
 
 namespace Modules\Assessment\Contracts;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Assessment\Contracts\Data\AssessmentResultData;
 
 /** Hasil assessment yang tersimpan (anonim atau sudah diklaim ke akun customer). */

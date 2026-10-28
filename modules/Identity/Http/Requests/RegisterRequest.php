@@ -2,6 +2,7 @@
 
 namespace Modules\Identity\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
@@ -14,6 +15,7 @@ final class RegisterRequest extends FormRequest
         $this->normalizeCustomerInput();
     }
 
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [

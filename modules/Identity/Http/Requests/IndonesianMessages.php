@@ -62,7 +62,11 @@ trait IndonesianMessages
         $this->merge($data);
     }
 
-    /** Nomor HP Indonesia: 08…, 628…, atau +628… */
+    /**
+     * Nomor HP Indonesia: 08…, 628…, atau +628…
+     *
+     * @return list<string>
+     */
     protected function phoneRules(): array
     {
         return ['required', 'string', 'max:20', 'regex:/^(\+62|62|0)8[0-9]{7,12}$/'];

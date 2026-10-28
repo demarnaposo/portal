@@ -2,6 +2,7 @@
 
 namespace Modules\Admin\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,6 +13,7 @@ final class ProfileUpdateRequest extends FormRequest
         $this->merge(['email' => mb_strtolower(trim((string) $this->input('email')))]);
     }
 
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [
